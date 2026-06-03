@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "鸿蒙应用开发者激励计划2026",
+  "version": "1.2.0",
+  "author": "范小兵",
+  "description": "鸿蒙激励计划数据看板，实时展示应用月活、评分及达标情况，支持深浅色主题与月度趋势分析",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://developer.huawei.com/consumer/cn/activity/harmonyos-incentive/*"],
+      "js": ["intercept.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://developer.huawei.com/consumer/cn/activity/harmonyos-incentive/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "permissions": ["storage"],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/icon.png"],
+      "matches": ["https://developer.huawei.com/*"]
+    },
+    {
+      "resources": ["stats.html", "stats.js", "echarts.min.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
