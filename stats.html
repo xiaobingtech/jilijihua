@@ -185,7 +185,7 @@
       letter-spacing: 0.5px;
     }
     .stat-label {
-      font-size: 11px;
+      font-size: 13px;
       color: var(--text-3);
       margin-top: 4px;
       letter-spacing: 1px;
@@ -256,7 +256,8 @@
       border: 1px solid var(--border-1);
       box-shadow: var(--shadow-sm);
       padding: 20px 22px;
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(0, calc(50% - 10px)) minmax(0, calc(50% - 10px));
       gap: 20px;
       transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
     }
@@ -268,7 +269,6 @@
 
     /* Card Left: Info */
     .card-info {
-      flex: 0 0 220px;
       min-width: 0;
       display: flex;
       flex-direction: column;
@@ -320,19 +320,26 @@
       align-items: center;
     }
     .metric-label {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-3);
+      letter-spacing: 1px;
     }
     .metric-value {
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 26px;
+      font-weight: 800;
       color: var(--text-2);
+      letter-spacing: 0.5px;
     }
     .metric-value.v-green { color: var(--green); }
     .metric-value.v-red { color: var(--red); }
     .metric-value.v-blue { color: var(--blue); font-size: 16px; }
     .metric-value.v-cyan { color: var(--cyan); }
     .metric-value.v-yellow { color: var(--yellow); }
+
+    .metric-row.current-mau {
+      align-items: flex-end;
+      padding-bottom: 4px;
+    }
 
     .card-increase {
       display: flex;
@@ -343,8 +350,9 @@
       display: inline-block;
       padding: 2px 8px;
       border-radius: 6px;
-      font-size: 11px;
-      font-weight: 700;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
     }
     .increase-tag.pos {
       background: rgba(34, 197, 94, 0.1);
@@ -358,36 +366,8 @@
       background: rgba(148, 163, 184, 0.08);
       color: var(--text-3);
     }
-    .card-qualified-detail {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .qual-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 10px;
-      font-weight: 600;
-      border: 1px solid var(--border-1);
-      color: var(--text-3);
-    }
-    .qual-chip.ok {
-      border-color: rgba(34, 197, 94, 0.2);
-      color: var(--green);
-      background: rgba(34, 197, 94, 0.06);
-    }
-    .qual-chip.no {
-      border-color: rgba(239, 68, 68, 0.15);
-      color: var(--red);
-      background: rgba(239, 68, 68, 0.05);
-    }
-
     /* Card Right: Chart */
     .card-chart-area {
-      flex: 1;
       min-width: 0;
       display: flex;
       flex-direction: column;

@@ -216,76 +216,101 @@ function renderCards() {
 
   // Dispose old charts
   disposeCardCharts();
+  grid.replaceChildren();
 
   if (data.length === 0) {
-    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128269;</div><div class="empty-text">暂无匹配的应用数据</div></div>';
+    var emptyState = document.createElement('div');
+    emptyState.className = 'empty-state';
+    var emptyIcon = document.createElement('div');
+    emptyIcon.className = 'empty-icon';
+    emptyIcon.textContent = '\uD83D\uDD0D';
+    var emptyText = document.createElement('div');
+    emptyText.className = 'empty-text';
+    emptyText.textContent = '暂无匹配的应用数据';
+    emptyState.appendChild(emptyIcon);
+    emptyState.appendChild(emptyText);
+    grid.appendChild(emptyState);
     return;
   }
 
-  var html = '';
   data.forEach(function(app, idx) {
     var badgeClass = app.qualified ? 'pass' : 'fail';
     var badgeText = app.qualified ? '达标' : '未达标';
 
-    var mauClass = app.maxMau >= 400 ? 'v-green' : 'v-red';
     var curMauClass = app.currentMau >= 400 ? 'v-green' : (app.currentMau >= 300 ? 'v-yellow' : 'v-red');
 
     var scoreOk = app.score >= 3;
     var countOk = app.scoreCount >= 10;
 
-    var increaseHtml = '';
+    var increaseClass = 'zero';
+    var increaseText = '0';
     if (app.yesterdayIncrease > 0) {
-      increaseHtml = '<span class="increase-tag pos">+' + app.yesterdayIncrease + '</span>';
+      increaseClass = 'pos';
+      increaseText = '+' + app.yesterdayIncrease;
     } else if (app.yesterdayIncrease < 0) {
-      increaseHtml = '<span class="increase-tag neg">' + app.yesterdayIncrease + '</span>';
-    } else {
-      increaseHtml = '<span class="increase-tag zero">0</span>';
+      increaseClass = 'neg';
+      increaseText = String(app.yesterdayIncrease);
     }
 
     var cardId = 'card-chart-' + idx;
 
-    html += '<div class="app-card">' +
-      '<div class="card-info">' +
-        '<div class="card-header">' +
-          '<div class="card-app-name" title="' + escapeHtml(app.appName) + '">' + escapeHtml(app.appName) + '</div>' +
-          '<span class="card-badge ' + badgeClass + '">' + badgeText + '</span>' +
-        '</div>' +
-        '<div class="card-metrics">' +
-          '<div class="metric-row">' +
-            '<span class="metric-label">当月月活</span>' +
-            '<span class="metric-value ' + curMauClass + '">' + app.currentMau + '</span>' +
-          '</div>' +
-          '<div class="metric-row">' +
-            '<span class="metric-label">最高月活</span>' +
-            '<span class="metric-value ' + mauClass + '">' + app.maxMau + '</span>' +
-          '</div>' +
-          '<div class="metric-row">' +
-            '<span class="metric-label">月末评分</span>' +
-            '<span class="metric-value ' + (scoreOk ? 'v-green' : 'v-red') + '">' + app.score + '</span>' +
-          '</div>' +
-          '<div class="metric-row">' +
-            '<span class="metric-label">评分个数</span>' +
-            '<span class="metric-value ' + (countOk ? 'v-green' : 'v-red') + '">' + app.scoreCount + '</span>' +
-          '</div>' +
-          '<div class="metric-row">' +
-            '<span class="metric-label">昨日新增</span>' +
-            '<span class="card-increase">' + increaseHtml + '</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="card-qualified-detail">' +
-          '<span class="qual-chip ' + (app.maxMau >= 400 ? 'ok' : 'no') + '">月活' + (app.maxMau >= 400 ? '&#10003;' : '&#10007;') + '</span>' +
-          '<span class="qual-chip ' + (scoreOk ? 'ok' : 'no') + '">评分' + (scoreOk ? '&#10003;' : '&#10007;') + '</span>' +
-          '<span class="qual-chip ' + (countOk ? 'ok' : 'no') + '">数量' + (countOk ? '&#10003;' : '&#10007;') + '</span>' +
-        '</div>' +
-      '</div>' +
-      '<div class="card-chart-area">' +
-        '<div class="card-chart-title">月度月活趋势</div>' +
-        '<div class="card-chart" id="' + cardId + '"></div>' +
-      '</div>' +
-    '</div>';
-  });
+    var card = document.createElement('div');
+    card.className = 'app-card';
 
-  grid.innerHTML = html;
+    var info = document.createElement('div');
+    info.className = 'card-info';
+
+    var header = document.createElement('div');
+    header.className = 'card-header';
+    var appName = document.createElement('div');
+    appName.className = 'card-app-name';
+    appName.title = app.appName;
+    appName.textContent = app.appName;
+    var badge = document.createElement('span');
+    badge.className = 'card-badge ' + badgeClass;
+    badge.textContent = badgeText;
+    header.appendChild(appName);
+    header.appendChild(badge);
+
+    var metrics = document.createElement('div');
+    metrics.className = 'card-metrics';
+    metrics.appendChild(createMetricRow('当月月活', app.currentMau, curMauClass, 'current-mau'));
+    metrics.appendChild(createMetricRow('月末评分', app.score, scoreOk ? 'v-green' : 'v-red'));
+    metrics.appendChild(createMetricRow('评分个数', app.scoreCount, countOk ? 'v-green' : 'v-red'));
+
+    var increaseRow = document.createElement('div');
+    increaseRow.className = 'metric-row';
+    var increaseLabel = document.createElement('span');
+    increaseLabel.className = 'metric-label';
+    increaseLabel.textContent = '昨日新增';
+    var increase = document.createElement('span');
+    increase.className = 'card-increase';
+    var increaseTag = document.createElement('span');
+    increaseTag.className = 'increase-tag ' + increaseClass;
+    increaseTag.textContent = increaseText;
+    increase.appendChild(increaseTag);
+    increaseRow.appendChild(increaseLabel);
+    increaseRow.appendChild(increase);
+    metrics.appendChild(increaseRow);
+
+    info.appendChild(header);
+    info.appendChild(metrics);
+
+    var chartArea = document.createElement('div');
+    chartArea.className = 'card-chart-area';
+    var chartTitle = document.createElement('div');
+    chartTitle.className = 'card-chart-title';
+    chartTitle.textContent = '月度月活趋势';
+    var chart = document.createElement('div');
+    chart.className = 'card-chart';
+    chart.id = cardId;
+    chartArea.appendChild(chartTitle);
+    chartArea.appendChild(chart);
+
+    card.appendChild(info);
+    card.appendChild(chartArea);
+    grid.appendChild(card);
+  });
 
   // Initialize charts after DOM is ready
   requestAnimationFrame(function() {
@@ -294,6 +319,20 @@ function renderCards() {
       initCardChart(cardId, app.appName);
     });
   });
+}
+
+function createMetricRow(label, value, valueClass, rowClass) {
+  var row = document.createElement('div');
+  row.className = rowClass ? 'metric-row ' + rowClass : 'metric-row';
+  var labelEl = document.createElement('span');
+  labelEl.className = 'metric-label';
+  labelEl.textContent = label;
+  var valueEl = document.createElement('span');
+  valueEl.className = 'metric-value ' + valueClass;
+  valueEl.textContent = value;
+  row.appendChild(labelEl);
+  row.appendChild(valueEl);
+  return row;
 }
 
 // ===== Per-Card Chart =====

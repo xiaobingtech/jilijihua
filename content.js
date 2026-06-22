@@ -476,41 +476,6 @@
     processApiData(event.detail, true, false);
   });
 
-  function createFloatButton() {
-    var button = document.createElement('div');
-    button.id = 'mau-float-button';
-    button.style.cssText = `
-      position: fixed;
-      bottom: 30px;
-      left: 30px;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-image: url('${chrome.runtime.getURL('icons/icon.png')}');
-      background-size: cover;
-      background-position: center;
-      opacity: 0.6;
-      cursor: pointer;
-      z-index: 9999;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      transition: opacity 0.3s ease;
-    `;
-
-    button.addEventListener('mouseenter', function () {
-      button.style.opacity = '1';
-    });
-
-    button.addEventListener('mouseleave', function () {
-      button.style.opacity = '0.6';
-    });
-
-    button.addEventListener('click', function () {
-      window.open('http://47.116.201.205/gongsi/zhenlv/web/', '_blank');
-    });
-
-    document.body.appendChild(button);
-  }
-
   function createStatsButton() {
     var button = document.createElement('button');
     button.id = 'mau-stats-button';
@@ -656,13 +621,11 @@
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
-      createFloatButton();
       createStatsButton();
       initPreviousData();
       setTimeout(triggerAutoRequest, 2000);
     });
   } else {
-    createFloatButton();
     createStatsButton();
     initPreviousData();
     setTimeout(triggerAutoRequest, 2000);
